@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  # SQL Server Database
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
     container_name: forms-management-db
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Passw0rd
-      - MSSQL_PID=Express
+      - POSTGRES_DB=FormsManagementDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=YourStrong!Passw0rd
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqlserver_data:/var/opt/mssql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - forms-management-network
     restart: unless-stopped
@@ -26,7 +26,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=FormsManagementDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=FormsManagementDb;Username=postgres;Password=YourStrong!Passw0rd
       - JwtSettings__SecretKey=ProductionSecretKeyThatIsAtLeast32CharactersLongForSecurity!
       - JwtSettings__Issuer=FormsManagementAPI
       - JwtSettings__Audience=FormsManagementClients
@@ -35,7 +35,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - sqlserver
+      - postgres
     networks:
       - forms-management-network
     restart: unless-stopped
@@ -59,7 +59,7 @@ services:
     command: redis-server --appendonly yes
 
 volumes:
-  sqlserver_data:
+  postgres_data:
     driver: local
   redis_data:
     driver: local

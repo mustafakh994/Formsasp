@@ -6,35 +6,50 @@ namespace FormsManagementApi.Models;
 public class Form
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
+    
+    [Required]
+    public Guid DepartmentId { get; set; }
     
     [Required]
     [MaxLength(200)]
     public string Name { get; set; } = string.Empty;
     
+    [MaxLength(100)]
+    public string? Code { get; set; }
+    
+    [MaxLength(300)]
+    public string? Title { get; set; }
+    
     [MaxLength(1000)]
     public string? Description { get; set; }
     
-    [Required]
-    [Column(TypeName = "nvarchar(max)")]
-    public string FormSchema { get; set; } = string.Empty; // JSON schema for form fields
+    [Column(TypeName = "jsonb")]
+    public string? FormSchema { get; set; } // JSON schema for form fields
+    
+    [Column(TypeName = "jsonb")]
+    public string? Settings { get; set; } // JSON settings
+    
+    public Guid? CreatedBy { get; set; }
     
     [Required]
-    public bool IsActive { get; set; } = true;
+    public int Version { get; set; } = 1;
+    
+    [MaxLength(50)]
+    public string? Status { get; set; }
     
     [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
-    public DateTime? UpdatedAt { get; set; }
-    
-    // Foreign key
-    [Required]
-    public int TenantId { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
     
     // Navigation properties
-    [ForeignKey("TenantId")]
-    public virtual Tenant Tenant { get; set; } = null!;
+    [ForeignKey("DepartmentId")]
+    public virtual Department Department { get; set; } = null!;
+    
+    [ForeignKey("CreatedBy")]
+    public virtual User? Creator { get; set; }
     
     public virtual ICollection<FormSubmission> FormSubmissions { get; set; } = new List<FormSubmission>();
-    public virtual ICollection<FormPermission> FormPermissions { get; set; } = new List<FormPermission>();
+    public virtual ICollection<FormSchemaVersion> FormSchemaVersions { get; set; } = new List<FormSchemaVersion>();
 }

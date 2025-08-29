@@ -3,34 +3,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FormsManagementApi.Models;
 
-public class WebhookEndpoint
+public class SuperAdminUser
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]
-    public Guid DepartmentId { get; set; }
+    [MaxLength(255)]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
     
     [Required]
-    [MaxLength(500)]
-    public string Url { get; set; } = string.Empty;
+    [MaxLength(255)]
+    public string PasswordHash { get; set; } = string.Empty;
     
-    [Required]
-    [MaxLength(20)]
-    public string Method { get; set; } = "POST";
+    [MaxLength(200)]
+    public string? Name { get; set; }
     
     [Column(TypeName = "jsonb")]
-    public string? Headers { get; set; } // JSON headers
+    public string? Permissions { get; set; } // JSON permissions
     
     [Required]
     public bool IsActive { get; set; } = true;
+    
+    public DateTimeOffset? LastLoginAt { get; set; }
     
     [Required]
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
     public DateTimeOffset? UpdatedAt { get; set; }
-    
-    // Navigation property
-    [ForeignKey("DepartmentId")]
-    public virtual Department Department { get; set; } = null!;
 }

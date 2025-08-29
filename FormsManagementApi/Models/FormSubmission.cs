@@ -1,36 +1,34 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 
 namespace FormsManagementApi.Models;
 
 public class FormSubmission
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]
-    [Column(TypeName = "nvarchar(max)")]
-    public string SubmissionData { get; set; } = string.Empty; // JSON data
+    public Guid FormId { get; set; }
     
     [Required]
-    public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
+    [Column(TypeName = "jsonb")]
+    public string ResponseData { get; set; } = string.Empty; // JSON response data
     
-    [MaxLength(45)]
-    public string? IpAddress { get; set; }
+    public int? FormVersion { get; set; }
     
-    [MaxLength(500)]
-    public string? UserAgent { get; set; }
+    [Column(TypeName = "inet")]
+    public IPAddress? SubmitterIp { get; set; }
     
-    // Foreign keys
+    [MaxLength(255)]
+    [EmailAddress]
+    public string? SubmitterEmail { get; set; }
+    
     [Required]
-    public int FormId { get; set; }
-    
-    public int? UserId { get; set; }
+    public DateTimeOffset SubmittedAt { get; set; } = DateTimeOffset.UtcNow;
     
     // Navigation properties
     [ForeignKey("FormId")]
     public virtual Form Form { get; set; } = null!;
-    
-    [ForeignKey("UserId")]
-    public virtual User? User { get; set; }
 }

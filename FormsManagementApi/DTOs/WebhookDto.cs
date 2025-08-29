@@ -4,19 +4,22 @@ namespace FormsManagementApi.DTOs;
 
 public class WebhookEndpointDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
+    public Guid DepartmentId { get; set; }
     public string Url { get; set; } = string.Empty;
     public string Method { get; set; } = string.Empty;
-    public object? Headers { get; set; } // Will be deserialized JSON
+    public object? Headers { get; set; } // JSON headers
     public bool IsActive { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public int TenantId { get; set; }
-    public string TenantName { get; set; } = string.Empty;
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public string? DepartmentName { get; set; }
 }
 
 public class CreateWebhookEndpointDto
 {
+    [Required]
+    public Guid DepartmentId { get; set; }
+    
     [Required]
     [MaxLength(500)]
     [Url]

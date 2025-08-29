@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FormsManagementApi.Models;
 
-public class WebhookEndpoint
+public class Role
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -12,15 +12,17 @@ public class WebhookEndpoint
     public Guid DepartmentId { get; set; }
     
     [Required]
-    [MaxLength(500)]
-    public string Url { get; set; } = string.Empty;
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+    
+    [MaxLength(200)]
+    public string? DisplayName { get; set; }
+    
+    [MaxLength(1000)]
+    public string? Description { get; set; }
     
     [Required]
-    [MaxLength(20)]
-    public string Method { get; set; } = "POST";
-    
-    [Column(TypeName = "jsonb")]
-    public string? Headers { get; set; } // JSON headers
+    public bool IsSystemRole { get; set; } = false;
     
     [Required]
     public bool IsActive { get; set; } = true;
@@ -30,7 +32,10 @@ public class WebhookEndpoint
     
     public DateTimeOffset? UpdatedAt { get; set; }
     
-    // Navigation property
+    // Navigation properties
     [ForeignKey("DepartmentId")]
     public virtual Department Department { get; set; } = null!;
+    
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

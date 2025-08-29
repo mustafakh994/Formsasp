@@ -6,11 +6,10 @@ namespace FormsManagementApi.Models;
 public class User
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     
     [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = string.Empty;
+    public Guid DepartmentId { get; set; }
     
     [Required]
     [MaxLength(255)]
@@ -21,25 +20,37 @@ public class User
     [MaxLength(255)]
     public string PasswordHash { get; set; } = string.Empty;
     
-    [Required]
-    [MaxLength(50)]
-    public string Role { get; set; } = "User"; // SuperAdmin, TenantAdmin, User
+    [MaxLength(200)]
+    public string? Name { get; set; }
+    
+    public Guid? RoleId { get; set; }
+    
+    [Column(TypeName = "jsonb")]
+    public string? Profile { get; set; } // JSON profile data
+    
+    [Column(TypeName = "jsonb")]
+    public string? CustomPermissions { get; set; } // JSON custom permissions
     
     [Required]
     public bool IsActive { get; set; } = true;
     
+    public DateTimeOffset? EmailVerifiedAt { get; set; }
+    
+    public DateTimeOffset? LastLoginAt { get; set; }
+    
     [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
-    public DateTime? UpdatedAt { get; set; }
-    
-    // Foreign key
-    public int? TenantId { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
     
     // Navigation properties
-    [ForeignKey("TenantId")]
-    public virtual Tenant? Tenant { get; set; }
+    [ForeignKey("DepartmentId")]
+    public virtual Department Department { get; set; } = null!;
+    
+    [ForeignKey("RoleId")]
+    public virtual Role? Role { get; set; }
     
     public virtual ICollection<FormSubmission> FormSubmissions { get; set; } = new List<FormSubmission>();
     public virtual ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
+    public virtual ICollection<Form> CreatedForms { get; set; } = new List<Form>();
 }

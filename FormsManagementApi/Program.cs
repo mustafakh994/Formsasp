@@ -84,7 +84,7 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseNpgsql(connectionString));
 
 // Configure JWT Authentication
 builder.Services.AddAuthentication(options =>
@@ -121,10 +121,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Register Services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
+builder.Services.AddScoped<ISuperAdminUserService, SuperAdminUserService>();
 
 // Register HttpClient for webhook service
 builder.Services.AddHttpClient<IWebhookService, WebhookService>();
